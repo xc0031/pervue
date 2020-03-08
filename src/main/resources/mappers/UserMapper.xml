@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caoyuan.xiao4.pervue.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="telephone" property="telephone"/>
+        <result column="address" property="address"/>
+        <result column="enabled" property="enabled"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="userface" property="userface"/>
+        <result column="remark" property="remark"/>
+        <result column="sex" property="sex"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, phone, telephone, address, enabled, username, password, userface, remark, sex, province, city, district
+    </sql>
+
+
+    <!--列表查询-->
+    <select id="pageVO" resultType="com.caoyuan.xiao4.pervue.vo.UserVO">
+        SELECT
+        u.*, p.province provinceName,
+        IF (
+        c.city = '',
+        p.province,
+        c.city
+        ) cityName,
+        IF (
+        d.district = '',
+        c.city,
+        d.district
+        ) districtName,
+        GROUP_CONCAT(r.id)rids,
+        GROUP_CONCAT(r.`name`)rnames,
+        GROUP_CONCAT(r.nameZh)rnameZhs
+        FROM
+        USER u
+        LEFT JOIN nation p ON u.province = p.id
+        LEFT JOIN nation c ON u.city = c.id
+        LEFT JOIN nation d ON u.district = d.id
+        LEFT JOIN user_role ur on u.id=ur.uid
+        LEFT JOIN role r on ur.rid=r.id
+        <where>
+            <if test="vo.name!=null and vo.name!=''">
+                and u.name like "%"#{vo.name}"%"
+            </if>
+            <if test="vo.phone!=null and vo.phone!=''">
+                and u.phone like concat('%',#{vo.phone},'%')
+            </if>
+        </where>
+        GROUP BY u.id
+    </select>
+</mapper>

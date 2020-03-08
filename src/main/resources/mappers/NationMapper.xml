@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caoyuan.xiao4.pervue.mapper.NationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.Nation">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="parent" property="parent"/>
+    </resultMap>
+
+    <!--三级联动使用这个样式的map-->
+    <resultMap id="voMap" type="com.caoyuan.xiao4.pervue.vo.NationVo">
+        <id column="id" property="value"/>
+        <result column="province" property="label"/>
+        <!--二级菜单-->
+        <collection property="children" ofType="com.caoyuan.xiao4.pervue.vo.NationVo">
+            <id column="cid" property="value"/>
+            <result column="city" property="label"/>
+            <!--三级菜单,没有下一级了-->
+            <collection property="children" ofType="com.caoyuan.xiao4.pervue.vo.NationVo">
+                <id column="did" property="value"/>
+                <result column="district" property="label"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, province, city, district, parent
+    </sql>
+
+    <!--三级联动使用的查询,3表自关联,
+    如果二级没有城市,则显示省份.
+    如果三级没有区县,则id和区县都显示城市的-->
+    <select id="findAll" resultMap="voMap">
+    SELECT
+        p.id,
+        p.province,
+    IF (c.city = '', p.id, c.id) cid,
+    IF (
+        c.city = '',
+        p.province,
+        c.city
+    ) city,
+     IFNULL(d.id, c.id) did,
+     IFNULL(d.district, c.district) district
+    FROM
+        nation p
+    LEFT JOIN nation c ON p.id = c.parent
+    LEFT JOIN nation d ON c.id = d.parent
+    WHERE
+        p.parent = 1
+    </select>
+
+</mapper>
