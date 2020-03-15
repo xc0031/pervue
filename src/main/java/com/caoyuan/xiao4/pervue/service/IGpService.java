@@ -1,6 +1,6 @@
 package com.caoyuan.xiao4.pervue.service;
 
-import com.caoyuan.xiao4.pervue.entity.Order;
+import com.caoyuan.xiao4.pervue.entity.Gp;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author caoyuan
- * @since 2020-03-08
+ * @since 2020-03-13
  */
-public interface IOrderService extends IService<Order> {
+public interface IGpService extends IService<Gp> {
 
 }

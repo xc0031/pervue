@@ -1,7 +1,8 @@
 package com.caoyuan.xiao4.pervue.service;
 
-import com.caoyuan.xiao4.pervue.entity.MenuRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.caoyuan.xiao4.pervue.entity.MenuRole;
+import com.caoyuan.xiao4.pervue.vo.RoleVO;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMenuRoleService extends IService<MenuRole> {
 
+    boolean saveOrUpdateMenus(RoleVO vo);
 }

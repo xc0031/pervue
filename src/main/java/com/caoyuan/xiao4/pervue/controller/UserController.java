@@ -5,12 +5,13 @@ import com.caoyuan.xiao4.pervue.entity.User;
 import com.caoyuan.xiao4.pervue.service.IUserService;
 import com.caoyuan.xiao4.pervue.vo.Result;
 import com.caoyuan.xiao4.pervue.vo.UserVO;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 /**
@@ -27,6 +28,9 @@ public class UserController {
 
     @Resource
     private IUserService iUserService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * @Description 列表分页查询
@@ -67,7 +71,37 @@ public class UserController {
     @RequestMapping("saveOrUpdateUser")
 
     public Result addUser(@RequestBody User user) {
-        boolean save = iUserService.saveOrUpdate(user);
-        return Result.success(save);
+        return Result.success(iUserService.saveOrUpdate(user));
     }
+
+    @RequestMapping("login")
+    public Result login( User user) {
+        return iUserService.login(user);
+    }
+
+    //退出登录, 根据前台传回来的cookie中的token进行删除
+    @RequestMapping("logout")
+    public Result logout(String token) {
+        return Result.success(redisTemplate.delete("SESSION:" + token));
+    }
+
+    //原始的遍历cookies,进行查找cookie
+    //@RequestMapping("logout")
+    //public Result logout(HttpServletRequest request) {
+    //    String token = "";
+    //    Cookie[] cookies = request.getCookies();
+    //    for (Cookie cookie : cookies) {
+    //        if ("token".equals(cookie.getName())) {
+    //            token = cookie.getValue();
+    //        }
+    //    }
+    //    return Result.success(redisTemplate.delete("SESSION:" + token));
+    //}
+
+    //使用注解, 直接找到cookie, 不用前端传值,无法解决cookie跨域问题
+    //@RequestMapping("logout")
+    //public Result logout(@CookieValue("token") String token) {
+    //    System.err.println(token);
+    //    return Result.success(redisTemplate.delete("SESSION:" + token));
+    //}
 }

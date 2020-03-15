@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caoyuan.xiao4.pervue.mapper.Goods2Mapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.Goods2">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="pic" property="pic"/>
+        <result column="price" property="price"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, pic, price, province, city, district
+    </sql>
+    <!--列表查询-->
+    <select id="pageVO" resultType="com.caoyuan.xiao4.pervue.vo.Goods2VO">
+        SELECT
+        g.*,
+        p.province provinceName,
+        IF
+        ( c.city = '', p.province, c.city ) cityName,
+        IF
+        ( d.district = '', c.city, d.district ) districtName,
+        GROUP_CONCAT( pr.id ) pids,
+        GROUP_CONCAT( pr.`name` ) pnames
+        FROM
+        tb_goods2 g
+        LEFT JOIN nation p ON g.province = p.id
+        LEFT JOIN nation c ON g.city = c.id
+        LEFT JOIN nation d ON g.district = d.id
+        LEFT JOIN tb_gp gp ON g.id = gp.gid
+        LEFT JOIN tb_promotion pr ON gp.pid = pr.id
+        <where>
+            <if test="vo.name!=null and vo.name!=''">
+                and g.name like "%"#{vo.name}"%"
+            </if>
+            <if test="vo.price1!=null">
+                and g.price >=#{vo.price1}
+            </if>
+            <if test="vo.price2!=null">
+                and g.price &lt;=#{vo.price2}
+            </if>
+        </where>
+        GROUP BY g.id
+    </select>
+
+</mapper>

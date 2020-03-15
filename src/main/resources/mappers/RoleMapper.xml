@@ -4,14 +4,31 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.Role">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="nameZh" property="nameZh" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="nameZh" property="nameZh"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, nameZh
     </sql>
-
+    <!--多对多,角色与菜单的多对多,使用group by的方式,前台再进行切割-->
+    <select id="selectVO" resultType="com.caoyuan.xiao4.pervue.vo.RoleVO">
+        SELECT
+        r.*,
+        GROUP_CONCAT( m.id ) mids,
+        GROUP_CONCAT( m.name ) mname
+        FROM
+        role r
+        LEFT JOIN menu_role mr ON r.id = mr.rid
+        LEFT JOIN menu m ON m.id = mr.mid
+        <where>
+            <if test="vo.nameZh!=null and vo.nameZh!=''">
+                and r.nameZh like "%"#{vo.nameZh}"%"
+            </if>
+        </where>
+        GROUP BY
+        r.id
+    </select>
 </mapper>

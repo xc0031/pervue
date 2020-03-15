@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.caoyuan.xiao4.pervue.mapper.GoodsMapper">
+<mapper namespace="com.caoyuan.xiao4.pervue.mapper.PromotionMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.Goods">
+    <resultMap id="BaseResultMap" type="com.caoyuan.xiao4.pervue.entity.Promotion">
         <id column="id" property="id" />
         <result column="name" property="name" />
-        <result column="price" property="price" />
-        <result column="description" property="description" />
-        <result column="created" property="created" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, price, description, created
+        id, name
     </sql>
 
 </mapper>
